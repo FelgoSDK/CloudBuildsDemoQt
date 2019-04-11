@@ -30,6 +30,9 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 
 android {
+  ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
+  OTHER_FILES += android/AndroidManifest.xml  android/build.gradle
+
   # If the app requires OpenSSL, additional libraries are required. Uncomment ANDROID_EXTRA_LIBS lines in this case.
   # More information: https://github.com/ekke/android-openssl-qt
   # Both libraries are available and added at Felgo Cloud Builds and the _MANAGED flags are set
@@ -42,6 +45,9 @@ android {
 }
 
 ios {
+  QMAKE_INFO_PLIST = ios/Project-Info.plist
+  OTHER_FILES += $$QMAKE_INFO_PLIST
+
   # Set ID - fix for Qt = 5.11.1 - https://bugreports.qt.io/browse/QTBUG-70072
   equals(QT_MAJOR_VERSION, 5):equals(QT_MINOR_VERSION, 11):equals(QT_PATCH_VERSION, 1) {
     load(default_post.prf)
@@ -51,5 +57,15 @@ ios {
   # Set ID - Qt >= 5.12
   QMAKE_TARGET_BUNDLE_PREFIX = "com.yourcompany"
   QMAKE_BUNDLE = "cloudbuildsdemoqt"
+
+  # Graphics
+  ic_files.files =  $$files($$_PRO_FILE_PWD_/ios/Icon*.png)
+  launch_files.files = $$files($$_PRO_FILE_PWD_/ios/Def*.png)
+  QMAKE_BUNDLE_DATA += ic_files launch_files
+  exists( $$_PRO_FILE_PWD_/ios/Assets.xcassets ) {
+    QMAKE_ASSET_CATALOGS += $$_PRO_FILE_PWD_/ios/Assets.xcassets
+    QMAKE_ASSET_CATALOGS_APP_ICON = AppIcon
+    QMAKE_ASSET_CATALOGS_LAUNCH_IMAGE = LaunchImage
+  }
 }
 
