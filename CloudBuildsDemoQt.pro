@@ -58,14 +58,26 @@ ios {
   QMAKE_TARGET_BUNDLE_PREFIX = "com.yourcompany"
   QMAKE_BUNDLE = "cloudbuildsdemoqt"
 
-  # Graphics
-  ic_files.files =  $$files($$_PRO_FILE_PWD_/ios/Icon*.png)
-  launch_files.files = $$files($$_PRO_FILE_PWD_/ios/Def*.png)
-  QMAKE_BUNDLE_DATA += ic_files launch_files
-  exists( $$_PRO_FILE_PWD_/ios/Assets.xcassets ) {
+  !equals(TEMPLATE, lib):exists( $$_PRO_FILE_PWD_/ios/Assets.xcassets ) {
     QMAKE_ASSET_CATALOGS += $$_PRO_FILE_PWD_/ios/Assets.xcassets
     QMAKE_ASSET_CATALOGS_APP_ICON = AppIcon
-    QMAKE_ASSET_CATALOGS_LAUNCH_IMAGE = LaunchImage
+    export(QMAKE_ASSET_CATALOGS)
+    export(QMAKE_ASSET_CATALOGS_APP_ICON)
+
+    # Use new storyboard launch screen
+    exists($$_PRO_FILE_PWD_/ios/Launch Screen.storyboard) {
+      QMAKE_LAUNCH_SCREEN = "ios/Launch Screen.storyboard"
+      launch_screen_bundle.files = $$QMAKE_LAUNCH_SCREEN
+      QMAKE_BUNDLE_DATA += launch_screen_bundle
+    }
+
+    # Use old launch images
+    exists($$_PRO_FILE_PWD_/ios/Assets.xcassets/LaunchImage.launchimage) {
+      QMAKE_ASSET_CATALOGS_LAUNCH_IMAGE = LaunchImage
+      export(QMAKE_ASSET_CATALOGS_LAUNCH_IMAGE)
+    }
   }
+
+  export(QMAKE_BUNDLE_DATA)
 }
 

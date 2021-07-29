@@ -1,25 +1,25 @@
 buildscript {
     repositories {
-        jcenter()
-        maven { url 'https://maven.google.com' }
+        google()
+        mavenCentral()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.1'
+        classpath 'com.android.tools.build:gradle:3.6.0'
     }
 }
 
 allprojects {
     repositories {
-        jcenter()
-        maven { url 'https://maven.google.com' }
+        google()
+        mavenCentral()
     }
 }
 
 apply plugin: 'com.android.application'
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
+    implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
 }
 
 android {
@@ -39,8 +39,16 @@ android {
     compileSdkVersion    androidCompileSdkVersion.toInteger()
     buildToolsVersion    androidBuildToolsVersion
 
+    compileOptions {
+      sourceCompatibility 1.8
+      targetCompatibility 1.8
+    }
+
     defaultConfig {
+      multiDexEnabled true
       targetSdkVersion   androidCompileSdkVersion.toInteger()
+      minSdkVersion    = project.hasProperty("qtMinSdkVersion") ? qtMinSdkVersion.toInteger() : 21
+
 
       int qtVersionNr = project.hasProperty("qtVersionInt") ? qtVersionInt.toInteger() : 5152
       if (qtVersionNr < 5140) {
@@ -66,5 +74,11 @@ android {
 
     lintOptions {
         abortOnError false
+    }
+    aaptOptions { // Do not compress Qt binary resources file
+        noCompress 'rcc'
+    }
+    tasks.withType(JavaCompile) {
+        options.incremental = true
     }
 }
