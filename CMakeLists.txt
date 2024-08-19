@@ -31,3 +31,14 @@ target_link_libraries(appCloudBuildsDemoQt
 install(TARGETS appCloudBuildsDemoQt
     BUNDLE DESTINATION .
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+
+
+if(CMAKE_SYSTEM_NAME STREQUAL "Android")
+    # Set Android specific configuration directory
+    set_property(TARGET appCloudBuildsDemoQt APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/android)
+
+    # Override Gradle wrapper version
+    string(APPEND gradle_wrapper_properties "distributionUrl=https\://services.gradle.org/distributions/gradle-8.7-bin.zip")
+    file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/android-build/gradle/wrapper/gradle-wrapper.properties" "${gradle_wrapper_properties}")
+endif()
+
